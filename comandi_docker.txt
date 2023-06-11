@@ -1,0 +1,45 @@
+//CAMBIARE CONTESTO DI DOCKER SU TERMINALE
+
+docker context ls
+docker context use desktop-linux
+
+//IN CASO DI PROBLEMI CON PERMESSI
+
+sudo usermod -aG docker andrea
+cat /etc/group | grep docker
+sudo chmod 666 /var/run/docker.sock
+
+//VEDERE TUTTE LE IMMAGINI DISPONIBILI
+
+docker image ls
+
+//VEDERE TUTTI I CONTAINER DISPONIBILI
+
+docker image ls
+
+//FARE IL BUILD DI UN'IMMAGINE
+
+docker build -t myhello .
+
+//CREARE UN CONTAINER
+
+docker create --name=myhello myhello
+
+//ESEGUIRE CONTAINER CHE È STATO CREATO
+
+docker start -i myhello
+
+//COSTRUZIONE IMMAGINI DEI CONTAINER ATTRAVERSO DOCKER COMPOSE
+
+docker compose build
+
+//AVVIO DELL'APPLICAZIONE CON DOCKER COMPOSE
+
+docker compose up
+
+//ARRESTO DELL'APPLICAZIONE CON DOCKER COMPOSE
+
+docker compose down
+
+
+

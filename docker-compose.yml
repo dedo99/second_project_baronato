@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+  batch-spark:
+    build: ./batch_preprocessing_analysis
+    image: batch-spark:compose
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    # volumes:
+      #  - /home/andrea/Documents/GitHub/second_project_baronato/batch_preprocessing_analysis/volume:/opt/spark-apps
+      #  - ./data:/opt/spark-data
+    # environment:
+      # - SPARK_LOCAL_IP=spark-master
+      # - SPARK_WORKLOAD=master
