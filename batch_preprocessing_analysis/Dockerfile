@@ -1,5 +1,7 @@
 FROM bitnami/spark
 
+RUN pip install pandas && pip install pyarrow
+
 # Copia gli script Python nella directory dell'applicazione Spark
 COPY ./scripts /app
 
