@@ -1,1 +1,6 @@
+<<<<<<< Updated upstream
 *.csv
+=======
+*.csv
+/cassandra_db/data/*
+>>>>>>> Stashed changes
