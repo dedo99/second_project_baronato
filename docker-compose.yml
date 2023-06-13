@@ -1,14 +1,49 @@
 version: "3.3"
+
+
 services:
   batch-spark:
     build: ./batch_preprocessing_analysis
     image: batch-spark:compose
+    networks:
+      - my-network
     ports:
-      - "9090:8080"
+      - "4040:4040"
       - "7077:7077"
-    # volumes:
-      #  - /home/andrea/Documents/GitHub/second_project_baronato/batch_preprocessing_analysis/volume:/opt/spark-apps
-      #  - ./data:/opt/spark-data
-    # environment:
-      # - SPARK_LOCAL_IP=spark-master
-      # - SPARK_WORKLOAD=master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_URL=spark://spark-master:7077
+
+  # cassandra:
+  #   image: cassandra:latest
+  #   container_name: cassandra
+  #   networks:
+  #     - my-network
+  #   ports:
+  #     - 9042:9042
+  #   volumes:
+  #     - ./cassandra_db/script:/docker-entrypoint.sh
+  #     - ./cassandra_db/data:/var/lib/cassandra
+  #   command: >
+  #     bash ./docker-entrypoint.sh/execute-cql.sh
+
+
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    networks:
+      - my-network
+    ports:
+      - "9042:9042"
+    environment:
+      - "MAX_HEAP_SIZE=256M"
+      - "HEAP_NEWSIZE=128M"
+    volumes:
+      - ./cassandra_db/data:/var/lib/cassandra
+      # - ./cassandra_db/script:/docker-entrypoint-initdb.d
+    # command: bash -c 'sleep 10 && cqlsh -f /init-script.cql cassandra'
+
+
+networks:
+  my-network:
+    driver: bridge

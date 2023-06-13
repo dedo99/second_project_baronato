@@ -1,0 +1,3 @@
+//ATTIVARE SHELL INTERATTIVA CASSANDRA
+
+docker exec -it cassandra cqlsh
