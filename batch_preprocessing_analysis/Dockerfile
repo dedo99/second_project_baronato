@@ -4,4 +4,4 @@ FROM bitnami/spark
 COPY ./scripts /app
 
 # Avvia l'applicazione Spark
-CMD spark-submit --master local[*] /app/main.py --input_path file:///input/HomeC.csv
+CMD spark-submit --master local[*] /app/main.py
