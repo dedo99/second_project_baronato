@@ -45,5 +45,9 @@ docker compose down
 
 docker exec -it second_project_baronato-batch-spark-1 bash
 
+//RIAVVIARE UN SERVIZIO CHE È TERMINATO
+
+docker compose restart producer
+
 
 

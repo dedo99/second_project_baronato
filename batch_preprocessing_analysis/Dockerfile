@@ -1,6 +1,10 @@
 FROM bitnami/spark
 
-RUN pip install pandas && pip install pyarrow
+RUN pip install pandas && pip install pyarrow && pip install kafka-python 
+
+# USER root
+
+# RUN apt-get update && apt-get install -y netcat
 
 # Copia gli script Python nella directory dell'applicazione Spark
 COPY ./scripts /app

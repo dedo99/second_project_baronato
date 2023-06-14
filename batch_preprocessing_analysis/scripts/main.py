@@ -1,5 +1,6 @@
 from batch_preprocessing import batch_processing_function
 from batch_analysis import batch_analysis_function
+from consumer import consumer
 import time
 from pyspark.sql import SparkSession
 import argparse
@@ -26,11 +27,8 @@ batch_processing_function()
 
 batch_analysis_function()
 
+consumer()
+
 # time.sleep(120)
 
 print('Ciao a tutti!')
-
-variable_loop = True
-
-while variable_loop:
-    pass
