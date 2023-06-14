@@ -41,5 +41,9 @@ docker compose up
 
 docker compose down
 
+//ENTRARE NEL TERMINALE DEL CONTAINER ATTIVO
+
+docker exec -it second_project_baronato-batch-spark-1 bash
+
 
 
