@@ -6,7 +6,8 @@ FROM python:3.9
 COPY producer.py .
 
 # Installa le dipendenze necessarie
-RUN pip install kafka-python && apt-get update && apt-get install -y netcat
+#RUN pip install kafka-python && apt-get update && apt-get install -y netcat
+RUN pip install kafka-python
 
 # Imposta il comando di avvio per il produttore Kafka
 CMD ["python", "producer.py"]

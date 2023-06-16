@@ -1,5 +1,6 @@
 from batch_preprocessing import batch_processing_function
 from batch_analysis import batch_analysis_function
+from streaming import streaming_function
 from consumer import consumer
 import time
 from pyspark.sql import SparkSession
@@ -7,9 +8,9 @@ import argparse
 import pandas as pd
 import pyspark.pandas as ps
 
-psdf2 = ps.DataFrame({'id': [5, 4, 3]})
+#psdf2 = ps.DataFrame({'id': [5, 4, 3]})
 
-print(psdf2)
+#print(psdf2)
 # parser = argparse.ArgumentParser()
 # parser.add_argument("--input_path", type=str, help="Input file path")
 # args = parser.parse_args()
@@ -27,7 +28,7 @@ batch_processing_function()
 
 batch_analysis_function()
 
-consumer()
+#consumer()
 
 # time.sleep(120)
 

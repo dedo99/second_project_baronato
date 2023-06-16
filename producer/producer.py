@@ -32,7 +32,7 @@ def send_single_data(topic, data):
     producer.send(topic, value)
 
 # Esempio di invio in batch
-batch_data = ['Data 1', 'Data 2', 'Data 3']
+batch_data = ['Data, 1', 'Data, 2', 'Data, 3']
 send_batch_data('my-topic', batch_data)
 
 # Esempio di invio singolo

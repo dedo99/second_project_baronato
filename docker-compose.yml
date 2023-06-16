@@ -51,6 +51,7 @@ services:
     # command: bash -c "while ! nc -z 127.0.0.1 9092; do sleep 1; done && python ./producer.py"
 
 
+
   batch-spark:
     build: ./batch_preprocessing_analysis
     image: batch-spark:compose
@@ -67,6 +68,21 @@ services:
     volumes:
       - ./HomeC.csv:/input/HomeC.csv
     # command: bash -c "while ! nc -z 127.0.0.1 9092; do sleep 1; done && python ./producer.py"
+
+  streaming-spark:
+    build: ./streaming
+    image: streaming-spark:compose
+    depends_on:
+      kafka:
+        condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
+    networks:
+      - my-network
+    ports:
+      - "4041:4040"
+      - "7078:7077"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
 
   # cassandra:
   #   image: cassandra:latest
