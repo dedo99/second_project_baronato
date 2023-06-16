@@ -7,7 +7,7 @@ COPY producer.py .
 
 # Installa le dipendenze necessarie
 #RUN pip install kafka-python && apt-get update && apt-get install -y netcat
-RUN pip install kafka-python
+RUN pip install kafka-python && pip install confluent-kafka 
 
 # Imposta il comando di avvio per il produttore Kafka
 CMD ["python", "producer.py"]

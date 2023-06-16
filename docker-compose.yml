@@ -6,25 +6,27 @@ services:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     networks:
       - my-network
     ports:
-      - 22181:2181
+      - "22181:2181"
   
 
   kafka:
     build: ./kafka
     image: kafka:compose
+    container_name: kafka
     networks:
       - my-network
     depends_on:
       - zookeeper
     ports:
-      - 29092:29092
-      - 9092:9092
+      - "29092:29092"
+      - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -32,6 +34,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
     healthcheck:
       test: ["CMD-SHELL", "nc -z kafka 9092 || exit 1"]
       interval: 5s
@@ -41,6 +44,7 @@ services:
   producer:
     build: ./producer
     image: producer:compose
+    container_name: producer
     depends_on:
       kafka:
         condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
@@ -51,10 +55,10 @@ services:
     # command: bash -c "while ! nc -z 127.0.0.1 9092; do sleep 1; done && python ./producer.py"
 
 
-
   batch-spark:
     build: ./batch_preprocessing_analysis
     image: batch-spark:compose
+    container_name: batch-spark
     depends_on:
       kafka:
         condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
@@ -72,6 +76,7 @@ services:
   streaming-spark:
     build: ./streaming
     image: streaming-spark:compose
+    container_name: streaming-spark
     depends_on:
       kafka:
         condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
@@ -81,7 +86,9 @@ services:
       - "4041:4040"
       - "7078:7077"
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      - SPARK_APPLICATION_MAIN_CLASS=your.main.Class
+      - SPARK_APPLICATION_ARGS=--bootstrap.servers=kafka:9092 --topic=my-topic
+
 
 
   # cassandra:
