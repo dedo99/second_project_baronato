@@ -1,46 +1,68 @@
 from pyspark.sql import SparkSession
 import pandas as pd
 import pyspark.pandas as ps
-from datetime import timedelta
+import datetime
 import argparse
 import re
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_path", type=str, help="Input file path")
-parser.add_argument("--output_path", type=str, help="Output file path")
+#parser.add_argument("--output_path", type=str, help="Output file path")
 
 args = parser.parse_args()
-input_filepath, output_filepath = args.input_path, args.output_path
-#input_filepath = args.input_path
+#input_filepath, output_filepath = args.input_path, args.output_path
+input_filepath = args.input_path
 
-# read csv
-df = ps.read_csv(input_filepath)
+spark = SparkSession.builder.appName("PREPROCESSING").getOrCreate()
+
+indicies = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30]
+
+data = 0
+
+pattern = r"[-+]?\d+(?:\.\d+)?[eE][-+]?\d+"
+
+input_RDD = spark.sparkContext.textFile(input_filepath).cache()
+
+# RDD con righe divise
+rows_RDD = input_RDD.map(lambda line: line.split(','))
 
 # Elimina gli attributi "icon" e "cloudCover"
-df = df.drop(['icon', 'cloudCover'], axis=1)
+delete_columns_RDD = rows_RDD.map(lambda x: [x[idx] for idx in indicies])
 
+def convert_temperature(line):
+    try:
+        temp = int(line[19])
+        line[19] = (temp - 32) * 5/9
+        return line
+    except ValueError:
+        return line
+    
 # Conversione da Fahrenheit a Celsius
-df['temperature'] = (df['temperature'] - 32) * 5/9
+convert_temperature_RDD = delete_columns_RDD.map(convert_temperature)
 
-# Conversione dell'attributo "time" da UNIX time a data incrementando di 60 secondi
-start_time = pd.to_datetime(df['time'].iloc[0], unit='s')
-df['time'] = start_time
+def convert_time(line):
+    global data
+    try:
+        unix_date = int(line[0]) + data
+        data = unix_date
+        line[0] = datetime.datetime.fromtimestamp(unix_date).strftime('%Y-%m-%d %H:%M:%S')
+        return line
+    except ValueError:
+        return line
 
-for i in range(1, len(df)):
-    df.loc[i, 'time'] = df.loc[i-1, 'time'] + timedelta(seconds=60)
+convert_time_RDD = convert_temperature_RDD.map(convert_time)
 
-# Conversione notazione scientifica in float
-# pattern = r"[-+]?\d+(?:\.\d+)?[eE][-+]?\d+"
-# for i in range(1, len(df)):
-#     for column in df.columns:
-#         if re.fullmatch(pattern, str(df.loc[i, column])):
-#             y = float(df.loc[i, column])
-#             df.loc[i, column] = "{:f}".format(y)
+def convert_scientific_notation(line):
+    for i in range(0, len(line)):
+        if re.fullmatch(pattern, str(line[i])):
+            y = float(line[i])
+            line[i] = "{:f}".format(y)
+    return line
 
-# Visualizza il DataFrame preprocessato
-print(df.head)
+scientific_notation_RDD = convert_time_RDD.map(convert_scientific_notation)
 
-df.to_csv(output_filepath + '/preprocessed.csv')
+print(scientific_notation_RDD.collect())
 
-# def batch_processing_function():
-#     print("Batch Processing")
+df = pd.DataFrame(scientific_notation_RDD.collect())
+
+df.to_csv(METTERE PATH GIUSTO, index = False)
