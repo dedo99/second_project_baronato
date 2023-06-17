@@ -52,6 +52,8 @@ services:
       - my-network
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    volumes:
+      - ./HomeC.csv:/input/HomeC.csv
     # command: bash -c "while ! nc -z 127.0.0.1 9092; do sleep 1; done && python ./producer.py"
 
 

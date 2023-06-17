@@ -1,37 +1,32 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import explode, split
-import logging
-
-# Ottieni il logger del modulo kafka
-logger = logging.getLogger("kafka")
-logger.setLevel(logging.DEBUG)  # Imposta il livello di logging desiderato
-
-# Configura l'handler di logging per il logger di kafka
-handler = logging.StreamHandler()  # Puoi modificare questo per inoltrare i log a un file
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 
 
-#initialize SparkSession
-spark = SparkSession \
-    .builder \
-    .appName('Streaming') \
+# Configura le informazioni di connessione a Kafka
+kafka_params = {
+    'kafka.bootstrap.servers': 'kafka:9092',  # Modifica se Kafka è in esecuzione su un altro indirizzo
+    'subscribe': 'my-topic',  # Specifica il topic da consumare
+    'startingOffsets': 'earliest'  # Inizia a leggere dal primo messaggio disponibile
+}
+
+# Crea una sessione Spark
+spark = SparkSession.builder \
+    .appName('KafkaStreamingConsumer') \
     .getOrCreate()
 
-lines_DF = spark \
+
+# Leggi i dati da Kafka utilizzando la libreria spark-kafka-connector
+df = spark \
     .readStream \
     .format('kafka') \
-    .option('kafka.bootstrap.servers', 'kafka:9092') \
-    .option('subscribe', 'my-topic') \
+    .options(**kafka_params) \
     .load()
 
-rows_DF = lines_DF.map(lambda line: line.split(','))
-
-query = rows_DF \
+# Elabora i messaggi dal dataframe
+query = df \
+    .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)") \
     .writeStream \
-    .outputMode('complete') \
     .format('console') \
     .start()
 
+# Attendi la terminazione dello streaming
 query.awaitTermination()
