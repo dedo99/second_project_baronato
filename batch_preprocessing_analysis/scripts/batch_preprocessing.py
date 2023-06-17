@@ -65,4 +65,4 @@ print(scientific_notation_RDD.collect())
 
 df = pd.DataFrame(scientific_notation_RDD.collect())
 
-df.to_csv(METTERE PATH GIUSTO, index = False)
+df.to_csv("input/output_preprocessing.csv", index = False)
