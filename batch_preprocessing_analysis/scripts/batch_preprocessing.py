@@ -1,17 +1,16 @@
 from pyspark.sql import SparkSession
 import pandas as pd
-import pyspark.pandas as ps
 import datetime
 import argparse
 import re
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_path", type=str, help="Input file path")
-#parser.add_argument("--output_path", type=str, help="Output file path")
+parser.add_argument("--output_path", type=str, help="Output file path")
 
 args = parser.parse_args()
-#input_filepath, output_filepath = args.input_path, args.output_path
-input_filepath = args.input_path
+input_filepath, output_filepath = args.input_path, args.output_path
+#input_filepath = args.input_path
 
 spark = SparkSession.builder.appName("PREPROCESSING").getOrCreate()
 
@@ -63,6 +62,8 @@ scientific_notation_RDD = convert_time_RDD.map(convert_scientific_notation)
 
 print(scientific_notation_RDD.collect())
 
-df = pd.DataFrame(scientific_notation_RDD.collect())
+scientific_notation_RDD.saveAsTextFile(output_filepath)
 
-df.to_csv("input/output_preprocessing.csv", index = False)
+#df = pd.DataFrame(scientific_notation_RDD.collect())
+
+#df.to_csv("input/output_preprocessing.csv", index = False)
