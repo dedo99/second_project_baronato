@@ -1,6 +1,6 @@
 FROM bitnami/spark
 
-RUN pip install pandas && pip install pyarrow && pip install kafka-python 
+RUN pip install pandas && pip install pyarrow && pip install kafka-python
 
 # USER root
 

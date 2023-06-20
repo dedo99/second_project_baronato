@@ -1,10 +1,9 @@
 #!/bin/bash
 
-#Command 1
-$HADOOP_HOME/bin/hdfs dfs -put /input/HomeC.csv /input
-
-# Command 2
-spark-submit --master yarn[*] /app/batch_preprocessing.py --input_path hdfs:///input/HomeC.csv --output_path hdfs:///output/preprocessed 
+#ls -l /input
 
 # Command 3
-saprk-submit --master yarn[*] /app/batch_analysis --input_path hdfs:///output/preprocessed
+spark-submit --master local[*] /app/batch_preprocessing.py --input_path file:///input/HomeC.csv --output_path file:///input/preprocessed 
+
+# Command 4
+spark-submit --master local[*] /app/batch_analysis.py --input_path file:///input/preprocessed

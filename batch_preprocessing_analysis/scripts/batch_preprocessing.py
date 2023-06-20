@@ -60,10 +60,6 @@ def convert_scientific_notation(line):
 
 scientific_notation_RDD = convert_time_RDD.map(convert_scientific_notation)
 
-print(scientific_notation_RDD.collect())
+df = scientific_notation_RDD.toDF()
 
-scientific_notation_RDD.saveAsTextFile(output_filepath)
-
-#df = pd.DataFrame(scientific_notation_RDD.collect())
-
-#df.to_csv("input/output_preprocessing.csv", index = False)
+df.write.format('csv').mode('overwrite').save(output_filepath, header='true')
