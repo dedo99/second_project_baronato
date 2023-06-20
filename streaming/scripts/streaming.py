@@ -11,6 +11,10 @@ kafka_params = {
 # Crea una sessione Spark
 spark = SparkSession.builder \
     .appName('KafkaStreamingConsumer') \
+    .config('spark.cassandra.connection.host', 'cassandra') \
+    .config('spark.cassandra.connection.port', '9042') \
+    .config("spark.cassandra.auth.username", "cassandra") \
+    .config("spark.cassandra.auth.password", "cassandra") \
     .getOrCreate()
 
 
@@ -21,12 +25,16 @@ df = spark \
     .options(**kafka_params) \
     .load()
 
+
 # Elabora i messaggi dal dataframe
-query = df \
-    .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)") \
-    .writeStream \
-    .format('console') \
+df = df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
+
+# Scrivi i messaggi in Cassandra
+df.writeStream \
+    .format('org.apache.spark.sql.cassandra') \
+    .option('keyspace', 'streaming') \
+    .option('table', 'raw_row') \
     .start()
 
 # Attendi la terminazione dello streaming
-query.awaitTermination()
+spark.streams.awaitAnyTermination()
