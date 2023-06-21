@@ -1,4 +1,5 @@
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import split, col
 
 
 # Configura le informazioni di connessione a Kafka
@@ -29,12 +30,22 @@ df = spark \
 # Elabora i messaggi dal dataframe
 df = df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
 
+# Estrai i valori di interesse dal campo "value"
+df = df.withColumn("value_array", split(col("value"), ","))  # Dividi il campo "value" in un array
+df = df.withColumn("key", col("value_array").getItem(0))  # Esempio: Estrai il primo valore
+df = df.withColumn("value", col("value_array").getItem(1))  # Esempio: Estrai il secondo valore
+
+# Rimuovi il campo "value_array" se non è più necessario
+df = df.drop("value_array")
+
 # Scrivi i messaggi in Cassandra
 df.writeStream \
     .format('org.apache.spark.sql.cassandra') \
     .option('keyspace', 'streaming') \
-    .option('table', 'raw_row') \
+    .option('table', 'raw_row_dataset') \
+    .option('checkpointLocation', 'checkpoint') \
     .start()
+
 
 # Attendi la terminazione dello streaming
 spark.streams.awaitAnyTermination()
