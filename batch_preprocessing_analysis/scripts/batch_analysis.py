@@ -2,8 +2,6 @@ import pandas as pd
 import logging
 import argparse
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import sum, col, month, avg, year, dayofweek, count, when, sum, last_day, next_day, dayofyear, \
-    dayofmonth, datediff, row_number, lit, max
 
 # Ottieni il logger del modulo kafka
 logger = logging.getLogger("ANALISI")
@@ -43,22 +41,186 @@ kw_total_df = spark.sql("""
     FROM df
 """)
 
-kw_month_df = df.groupBy(month('time').alias('month')).agg(sum('use [kW]').alias('use total [KW]'), 
-                                                           sum('gen [kW]').alias('gen total [KW]'))
-# kw_dayofweek_df = 
-# kw_day_df = 
-kw_total_df.show()
-kw_month_df.show()
-# Analisi tempo atmosferico
+kw_month_df = spark.sql("""
+    SELECT MONTH(time) AS month,
+           SUM(`use [kW]`) AS `use total [KW]`,
+           SUM(`gen [kW]`) AS `gen total [KW]`,
+           AVG(`use [kW]`) AS `use avg [KW]`,
+           AVG(`gen [kW]`) AS `gen avg [KW]`,
+           MAX(`use [kW]`) AS `use max [KW]`,
+           MAX(`gen [kW]`) AS `gen max [KW]`,
+           MIN(`use [kW]`) AS `use min [KW]`,
+           MIN(`gen [kW]`) AS `gen min [KW]`
+    FROM df
+    GROUP BY MONTH(time)
+""")
 
-# weather_total_df = 
-# weather_month_df = 
-# weather_dayofweek_df = 
-# weather_day_df = 
+kw_dayofweek_df = spark.sql("""
+    SELECT DAYOFWEEK(time) AS `day of week`,
+           SUM(`use [kW]`) AS `use total [KW]`,
+           SUM(`gen [kW]`) AS `gen total [KW]`,
+           AVG(`use [kW]`) AS `use avg [KW]`,
+           AVG(`gen [kW]`) AS `gen avg [KW]`,
+           MAX(`use [kW]`) AS `use max [KW]`,
+           MAX(`gen [kW]`) AS `gen max [KW]`,
+           MIN(`use [kW]`) AS `use min [KW]`,
+           MIN(`gen [kW]`) AS `gen min [KW]`
+    FROM df
+    GROUP BY DAYOFWEEK(time)
+""")
+
+
+kw_day_df = spark.sql("""
+    SELECT DAYOFYEAR(time) AS day,
+           SUM(`use [kW]`) AS `use total [KW]`,
+           SUM(`gen [kW]`) AS `gen total [KW]`,
+           AVG(`use [kW]`) AS `use avg [KW]`,
+           AVG(`gen [kW]`) AS `gen avg [KW]`,
+           MAX(`use [kW]`) AS `use max [KW]`,
+           MAX(`gen [kW]`) AS `gen max [KW]`,
+           MIN(`use [kW]`) AS `use min [KW]`,
+           MIN(`gen [kW]`) AS `gen min [KW]`
+    FROM df
+    GROUP BY DAYOFYEAR(time)
+""")
+
+#kw_total_df.show()
+#kw_month_df.show()
+#kw_day_df.show()
+#kw_dayofweek_df.show()
+
+# Analisi tempo atmosferico 
+weather_total_df = spark.sql("""
+    SELECT AVG(temperature) AS avgTemp,
+           MIN(temperature) AS minTemp,
+           MAX(temperature) AS maxTemp,
+           AVG(humidity) AS avgHum,
+           MIN(humidity) AS minHum,
+           MAX(humidity) AS maxHum,
+           AVG(visibility) AS avgVis,
+           MIN(visibility) AS minVis,
+           MAX(visibility) AS maxVis,
+           AVG(apparentTemperature) AS avgAppTemp,
+           MIN(apparentTemperature) AS minAppTemp,
+           MAX(apparentTemperature) AS maxAppTemp,
+           AVG(pressure) AS avgPress,
+           MIN(pressure) AS minPress,
+           MAX(pressure) AS maxPress,
+           AVG(windSpeed) AS avgWSpeed,
+           MIN(windSpeed) AS minWSpeed,
+           MAX(windSpeed) AS maxWSpeed,
+           AVG(windBearing) AS avgWBear,
+           MIN(windBearing) AS minWBear,
+           MAX(windBearing) AS maxWBear,
+           AVG(precipIntensity) AS avgPrec,
+           MIN(precipIntensity) AS minPrec,
+           MAX(precipIntensity) AS maxPrec,
+           AVG(dewPoint) AS avgDPoint,
+           MIN(dewPoint) AS minDPoint,
+           MAX(dewPoint) AS maxDPoint
+    FROM df
+""")
+
+weather_month_df = spark.sql("""
+    SELECT MONTH(time) AS month,
+           AVG(temperature) AS avgTemp,
+           MIN(temperature) AS minTemp,
+           MAX(temperature) AS maxTemp,
+           AVG(humidity) AS avgHum,
+           MIN(humidity) AS minHum,
+           MAX(humidity) AS maxHum,
+           AVG(visibility) AS avgVis,
+           MIN(visibility) AS minVis,
+           MAX(visibility) AS maxVis,
+           AVG(apparentTemperature) AS avgAppTemp,
+           MIN(apparentTemperature) AS minAppTemp,
+           MAX(apparentTemperature) AS maxAppTemp,
+           AVG(pressure) AS avgPress,
+           MIN(pressure) AS minPress,
+           MAX(pressure) AS maxPress,
+           AVG(windSpeed) AS avgWSpeed,
+           MIN(windSpeed) AS minWSpeed,
+           MAX(windSpeed) AS maxWSpeed,
+           AVG(windBearing) AS avgWBear,
+           MIN(windBearing) AS minWBear,
+           MAX(windBearing) AS maxWBear,
+           AVG(precipIntensity) AS avgPrec,
+           MIN(precipIntensity) AS minPrec,
+           MAX(precipIntensity) AS maxPrec,
+           AVG(dewPoint) AS avgDPoint,
+           MIN(dewPoint) AS minDPoint,
+           MAX(dewPoint) AS maxDPoint
+    FROM df
+    GROUP BY MONTH(time)
+""")
+weather_dayofweek_df = spark.sql("""
+    SELECT DAYOFWEEK(time) AS `day of week`,
+           AVG(temperature) AS avgTemp,
+           MIN(temperature) AS minTemp,
+           MAX(temperature) AS maxTemp,
+           AVG(humidity) AS avgHum,
+           MIN(humidity) AS minHum,
+           MAX(humidity) AS maxHum,
+           AVG(visibility) AS avgVis,
+           MIN(visibility) AS minVis,
+           MAX(visibility) AS maxVis,
+           AVG(apparentTemperature) AS avgAppTemp,
+           MIN(apparentTemperature) AS minAppTemp,
+           MAX(apparentTemperature) AS maxAppTemp,
+           AVG(pressure) AS avgPress,
+           MIN(pressure) AS minPress,
+           MAX(pressure) AS maxPress,
+           AVG(windSpeed) AS avgWSpeed,
+           MIN(windSpeed) AS minWSpeed,
+           MAX(windSpeed) AS maxWSpeed,
+           AVG(windBearing) AS avgWBear,
+           MIN(windBearing) AS minWBear,
+           MAX(windBearing) AS maxWBear,
+           AVG(precipIntensity) AS avgPrec,
+           MIN(precipIntensity) AS minPrec,
+           MAX(precipIntensity) AS maxPrec,
+           AVG(dewPoint) AS avgDPoint,
+           MIN(dewPoint) AS minDPoint,
+           MAX(dewPoint) AS maxDPoint
+    FROM df
+    GROUP BY DAYOFWEEK(time)
+""")
+weather_day_df = spark.sql("""
+    SELECT DAYOFYEAR(time) AS day,
+           AVG(temperature) AS avgTemp,
+           MIN(temperature) AS minTemp,
+           MAX(temperature) AS maxTemp,
+           AVG(humidity) AS avgHum,
+           MIN(humidity) AS minHum,
+           MAX(humidity) AS maxHum,
+           AVG(visibility) AS avgVis,
+           MIN(visibility) AS minVis,
+           MAX(visibility) AS maxVis,
+           AVG(apparentTemperature) AS avgAppTemp,
+           MIN(apparentTemperature) AS minAppTemp,
+           MAX(apparentTemperature) AS maxAppTemp,
+           AVG(pressure) AS avgPress,
+           MIN(pressure) AS minPress,
+           MAX(pressure) AS maxPress,
+           AVG(windSpeed) AS avgWSpeed,
+           MIN(windSpeed) AS minWSpeed,
+           MAX(windSpeed) AS maxWSpeed,
+           AVG(windBearing) AS avgWBear,
+           MIN(windBearing) AS minWBear,
+           MAX(windBearing) AS maxWBear,
+           AVG(precipIntensity) AS avgPrec,
+           MIN(precipIntensity) AS minPrec,
+           MAX(precipIntensity) AS maxPrec,
+           AVG(dewPoint) AS avgDPoint,
+           MIN(dewPoint) AS minDPoint,
+           MAX(dewPoint) AS maxDPoint
+    FROM df
+    GROUP BY DAYOFYEAR(time)
+""")
+                           
+# weather_total_df.show()
+# weather_month_df.show()
+# weather_dayofweek_df.show()
+# weather_day_df.show()
 
 # Ulteriori Analisi??
-
-# sum('use [kW]').alias('use total [KW]'), sum('gen [kW]').alias('gen total [KW]'),
-#                         avg('use [kW]').alias('use avg [KW]'), avg('gen [kW]').alias('gen avg [KW]'),
-#                         max('use [kW]').alias('use max [KW]'), max('gen [kW]').alias('gen max [KW]'),
-#                         min('use [kW]').alias('use max [KW]'), min('gen [kW]').alias('gen max [KW]')

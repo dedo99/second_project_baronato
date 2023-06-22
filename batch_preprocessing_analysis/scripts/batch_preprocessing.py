@@ -13,7 +13,7 @@ input_filepath = args.input_path
 
 spark = SparkSession.builder.appName("PREPROCESSING").getOrCreate()
 
-indicies = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30]
+indicies = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]
 
 pattern = r"[-+]?\d+(?:\.\d+)?[eE][-+]?\d+"
 
@@ -27,7 +27,7 @@ delete_columns_RDD = rows_RDD.map(lambda x: [x[idx] for idx in indicies])
 
 def convert_temperature(line):
     try:
-        temp = int(line[19])
+        temp = float(line[19])
         line[19] = (temp - 32) * 5/9
         return line
     except ValueError:
@@ -58,4 +58,4 @@ df.columns = header
 
 print('\n\n' + str(len(df)) + '\n\n')
 
-df.to_csv('/input/preprocessed/preprocessed.csv', index=False)
+df.to_csv('/home/pietro/Documenti/BigData/second_project_baronato/datasets/preprocessed.csv', index=False)
