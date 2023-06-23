@@ -34,19 +34,51 @@ client = InfluxDBClient(url=influxdb_url, token=token, org=influxdb_org)
 def write_to_influxdb(row):
     write_api = client.write_api(write_options=SYNCHRONOUS)
     try:
-        timestamp_unix_str = row.key
+        timestamp_unix_str = row.time_key
         # Converti il timestamp Unix in un oggetto datetime
         timestamp_unix = int(timestamp_unix_str)
         timestamp_obj = datetime.fromtimestamp(timestamp_unix)
         timestamp_str = timestamp_obj.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         point = Point("raw_iothome_data")
         point.tag("date", timestamp_str)  # Aggiungi il campo 'date' come tag
-        point.field("measurement", row.value)
+        point.field("use_kw", row.use_kw)
+        point.field("gen_kw", row.gen_kw)
+        point.field("house_overall_kw", row.house_overall_kw)
+        point.field("dishwasher_kw", row.dishwasher_kw)
+        point.field("furnace_1_kw", row.furnace_1_kw)
+        point.field("furnace_2_kw", row.furnace_2_kw)
+        point.field("home_office_kw", row.home_office_kw)
+        point.field("fridge_kw", row.fridge_kw)
+        point.field("wine_cellar_kw", row.wine_cellar_kw)
+        point.field("garage_door_kw", row.garage_door_kw)
+        point.field("kitchen_12_kw", row.kitchen_12_kw)
+        point.field("kitchen_14_kw", row.kitchen_14_kw)
+        point.field("kitchen_38_kw", row.kitchen_38_kw)
+        point.field("barn_kw", row.barn_kw)
+        point.field("well_kw", row.well_kw)
+        point.field("microwave_kw", row.microwave_kw)
+        point.field("living_room_kw", row.living_room_kw)
+        point.field("solar_kw", row.solar_kw)
+        point.field("temperature", row.temperature)
+        point.field("icon", row.icon)
+        point.field("humidity", row.humidity)
+        point.field("visibility", row.visibility)
+        point.field("summary", row.summary)
+        point.field("apparent_temperature", row.apparent_temperature)
+        point.field("pressure", row.pressure)
+        point.field("wind_speed", row.wind_speed)
+        point.field("cloud_cover", row.cloud_cover)
+        point.field("wind_bearing", row.wind_bearing)
+        point.field("precip_intensity", row.precip_intensity)
+        point.field("dew_point", row.dew_point)
+        point.field("precip_probability", row.precip_probability)
+
         print("scritturaaaaa!!")
         write_api.write(bucket=influxdb_bucket, org="iothome", record=point)
     except ValueError:
         # Gestisci il caso in cui il valore del timestamp non sia valido
         pass
+
 
 
 # Leggi i dati da Kafka
@@ -58,9 +90,43 @@ df = spark.readStream \
 # Elabora i messaggi dal dataframe
 df = df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
 df = df.withColumn("value_array", split(col("value"), ","))
-df = df.withColumn("key", col("value_array").getItem(0))
-df = df.withColumn("value", col("value_array").getItem(1))
+
+df = df.withColumn("time_key", col("value_array").getItem(0))
+df = df.withColumn("use_kw", col("value_array").getItem(1))
+df = df.withColumn("gen_kw", col("value_array").getItem(2))
+df = df.withColumn("house_overall_kw", col("value_array").getItem(3))
+df = df.withColumn("dishwasher_kw", col("value_array").getItem(4))
+df = df.withColumn("furnace_1_kw", col("value_array").getItem(5))
+df = df.withColumn("furnace_2_kw", col("value_array").getItem(6))
+df = df.withColumn("home_office_kw", col("value_array").getItem(7))
+df = df.withColumn("fridge_kw", col("value_array").getItem(8))
+df = df.withColumn("wine_cellar_kw", col("value_array").getItem(9))
+df = df.withColumn("garage_door_kw", col("value_array").getItem(10))
+df = df.withColumn("kitchen_12_kw", col("value_array").getItem(11))
+df = df.withColumn("kitchen_14_kw", col("value_array").getItem(12))
+df = df.withColumn("kitchen_38_kw", col("value_array").getItem(13))
+df = df.withColumn("barn_kw", col("value_array").getItem(14))
+df = df.withColumn("well_kw", col("value_array").getItem(15))
+df = df.withColumn("microwave_kw", col("value_array").getItem(16))
+df = df.withColumn("living_room_kw", col("value_array").getItem(17))
+df = df.withColumn("solar_kw", col("value_array").getItem(18))
+df = df.withColumn("temperature", col("value_array").getItem(19))
+df = df.withColumn("icon", col("value_array").getItem(20))
+df = df.withColumn("humidity", col("value_array").getItem(21))
+df = df.withColumn("visibility", col("value_array").getItem(22))
+df = df.withColumn("summary", col("value_array").getItem(23))
+df = df.withColumn("apparent_temperature", col("value_array").getItem(24))
+df = df.withColumn("pressure", col("value_array").getItem(25))
+df = df.withColumn("wind_speed", col("value_array").getItem(26))
+df = df.withColumn("cloud_cover", col("value_array").getItem(27))
+df = df.withColumn("wind_bearing", col("value_array").getItem(28))
+df = df.withColumn("precip_intensity", col("value_array").getItem(29))
+df = df.withColumn("dew_point", col("value_array").getItem(30))
+df = df.withColumn("precip_probability", col("value_array").getItem(31))
+
 df = df.drop("value_array")
+df = df.drop("key")
+df = df.drop("value")
 
 
 # Visualizza lo streaming dei dati
@@ -70,7 +136,7 @@ query = df.writeStream \
     .start()
 
 
-# # Scrivi i messaggi in Cassandra
+# # # Scrivi i messaggi in Cassandra
 query_cassandra = df.writeStream \
     .format('org.apache.spark.sql.cassandra') \
     .option('keyspace', 'streaming') \
