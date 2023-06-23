@@ -7,4 +7,5 @@ CREATE KEYSPACE IF NOT EXISTS streaming WITH REPLICATION = { 'class' : 'SimpleSt
 CREATE TABLE IF NOT EXISTS streaming.raw_row_dataset (key text PRIMARY KEY, value text);
 
 
-SELECT * FROM streaming.raw_row;
+
+SELECT * FROM streaming.raw_row_dataset;

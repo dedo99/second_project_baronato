@@ -1,6 +1,8 @@
 FROM bitnami/spark
 
-RUN pip install kafka-python 
+RUN pip install kafka-python && pip install influxdb-client
+
+ENV INFLUXDB_TOKEN=m_q2yxLk87PUPgYmI9edypxMKyOKeY4hTbByYCw-HyHxbrD_HAGMQbVlLoStQGzUazXddtu50yuvMS_ywsMIqg==
 
 COPY ./scripts .
 
