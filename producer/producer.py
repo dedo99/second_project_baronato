@@ -49,7 +49,7 @@ def send_dataset_to_kafka(topic, file_path):
             time.sleep(1)
 
 # Esegui l'invio del dataset a Kafka
-send_dataset_to_kafka('my-topic', '/input/HomeC.csv')
+send_dataset_to_kafka('my-topic', '/input/HomeC2.csv')
 
 # Chiudi il producer
 producer.close()
