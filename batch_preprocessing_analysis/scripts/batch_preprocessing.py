@@ -27,8 +27,10 @@ delete_columns_RDD = rows_RDD.map(lambda x: [x[idx] for idx in indicies])
 
 def convert_temperature(line):
     try:
+        temp_app = float(line[23])
         temp = float(line[19])
         line[19] = (temp - 32) * 5/9
+        line[23] = (temp_app - 32) * 5/9
         return line
     except ValueError:
         return line
@@ -59,3 +61,5 @@ df.columns = header
 print('\n\n' + str(len(df)) + '\n\n')
 
 df.to_csv('/home/pietro/Documenti/BigData/second_project_baronato/datasets/preprocessed.csv', index=False)
+
+# Save on Cassandra

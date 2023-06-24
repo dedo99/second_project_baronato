@@ -223,4 +223,16 @@ weather_day_df = spark.sql("""
 # weather_dayofweek_df.show()
 # weather_day_df.show()
 
+# kw_total_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/kW_use_all_time.csv", index = False)
+# kw_month_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/kW_use_month.csv", index = False)
+# kw_dayofweek_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/kW_use_day_of_week.csv", index = False)
+# kw_day_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/kW_use_day.csv", index = False)
+
+# weather_total_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/weather_all_time.csv", index = False)
+# weather_month_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/weather_month.csv", index = False)
+# weather_dayofweek_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/weather_day_of_week.csv", index = False)
+# weather_day_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/weather_day.csv", index = False)
+
 # Ulteriori Analisi??
+
+# Save on cassandra

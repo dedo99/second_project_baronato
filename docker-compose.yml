@@ -145,6 +145,22 @@ services:
       - SPARK_APPLICATION_ARGS=--bootstrap.servers=kafka:9092 --topic=my-topic
 
 
+  visualization:
+    build: ./visualization
+    image: visualization:compose
+    container_name: visualization
+    depends_on:
+      kafka:
+        condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
+    networks:
+      - my-network
+    ports:
+      - "8501:8501"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    volumes:
+      - ./datasets/test:/input
+      #DIPENDENZA CON CASSANDRA
 
 
 networks:
