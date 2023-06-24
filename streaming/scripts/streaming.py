@@ -1,9 +1,13 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import split, col
+from pyspark.sql.functions import split, col, format_number
 import os
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
 from datetime import datetime
+
+# --------------------------------------------------------------------------------
+# ------------------------------CONFIGURATION DB----------------------------------
+# --------------------------------------------------------------------------------
 
 # Configura le informazioni di connessione a Kafka
 kafka_params = {
@@ -29,6 +33,10 @@ spark = SparkSession.builder \
 
 # Crea la connessione a InfluxDB
 client = InfluxDBClient(url=influxdb_url, token=token, org=influxdb_org)
+
+# --------------------------------------------------------------------------------
+# ------------------------------AUXILIARY FUNCTION--------------------------------
+# --------------------------------------------------------------------------------
 
 # Funzione per scrivere i dati su InfluxDB
 def write_to_influxdb(row):
@@ -80,6 +88,9 @@ def write_to_influxdb(row):
         pass
 
 
+# --------------------------------------------------------------------------------
+# ---------------------------READING FROM KAFKA-----------------------------------
+# --------------------------------------------------------------------------------
 
 # Leggi i dati da Kafka
 df = spark.readStream \
@@ -127,6 +138,75 @@ df = df.withColumn("precip_probability", col("value_array").getItem(31))
 df = df.drop("value_array")
 df = df.drop("key")
 df = df.drop("value")
+
+# --------------------------------------------------------------------------------
+# ------------------------------PREPROCESSING-------------------------------------
+# --------------------------------------------------------------------------------
+
+# Converti la colonna da "STRING" a "NUMERIC"
+df = df.withColumn("temperature", col("temperature").cast("double")) 
+df = df.withColumn("apparent_temperature", col("apparent_temperature").cast("double")) 
+df = df.withColumn("use_kw", col("use_kw").cast("double")) 
+df = df.withColumn("gen_kw", col("gen_kw").cast("double")) 
+df = df.withColumn("house_overall_kw", col("house_overall_kw").cast("double")) 
+df = df.withColumn("dishwasher_kw", col("dishwasher_kw").cast("double")) 
+df = df.withColumn("furnace_1_kw", col("furnace_1_kw").cast("double")) 
+df = df.withColumn("furnace_2_kw", col("furnace_2_kw").cast("double")) 
+df = df.withColumn("home_office_kw", col("home_office_kw").cast("double")) 
+df = df.withColumn("fridge_kw", col("fridge_kw").cast("double")) 
+df = df.withColumn("wine_cellar_kw", col("wine_cellar_kw").cast("double")) 
+df = df.withColumn("garage_door_kw", col("garage_door_kw").cast("double")) 
+df = df.withColumn("kitchen_12_kw", col("kitchen_12_kw").cast("double")) 
+df = df.withColumn("kitchen_14_kw", col("kitchen_14_kw").cast("double")) 
+df = df.withColumn("kitchen_38_kw", col("kitchen_38_kw").cast("double")) 
+df = df.withColumn("barn_kw", col("barn_kw").cast("double")) 
+df = df.withColumn("well_kw", col("well_kw").cast("double")) 
+df = df.withColumn("microwave_kw", col("microwave_kw").cast("double")) 
+df = df.withColumn("living_room_kw", col("living_room_kw").cast("double")) 
+df = df.withColumn("solar_kw", col("solar_kw").cast("double"))
+df = df.withColumn("temperature", col("temperature").cast("double"))
+df = df.withColumn("humidity", col("humidity").cast("double"))
+df = df.withColumn("visibility", col("visibility").cast("double"))
+df = df.withColumn("apparent_temperature", col("apparent_temperature").cast("double"))
+df = df.withColumn("pressure", col("pressure").cast("double"))
+df = df.withColumn("wind_speed", col("wind_speed").cast("double"))
+df = df.withColumn("wind_bearing", col("wind_bearing").cast("double"))
+df = df.withColumn("precip_intensity", col("precip_intensity").cast("double"))
+df = df.withColumn("dew_point", col("dew_point").cast("double"))
+df = df.withColumn("precip_probability", col("precip_probability").cast("double"))
+
+# Converti temperature da Fahrenheit a Celsius
+df = df.withColumn("temperature", (col("temperature") - 32) * 5 / 9)
+
+# Converti apparent_temperature da Fahrenheit a Celsius
+df = df.withColumn("apparent_temperature", (col("apparent_temperature") - 32) * 5 / 9)
+
+# Rimuovi la notazione scientifica
+df = df.withColumn("use_kw", format_number(col("use_kw"), 8))
+df = df.withColumn("gen_kw", format_number(col("gen_kw"), 8))
+df = df.withColumn("house_overall_kw", format_number(col("house_overall_kw"), 8))
+df = df.withColumn("dishwasher_kw", format_number(col("dishwasher_kw"), 8))
+df = df.withColumn("furnace_1_kw", format_number(col("furnace_1_kw"), 8))
+df = df.withColumn("furnace_2_kw", format_number(col("furnace_2_kw"), 8))
+df = df.withColumn("home_office_kw", format_number(col("home_office_kw"), 8))
+df = df.withColumn("fridge_kw", format_number(col("fridge_kw"), 8))
+df = df.withColumn("wine_cellar_kw", format_number(col("wine_cellar_kw"), 8))
+df = df.withColumn("garage_door_kw", format_number(col("garage_door_kw"), 8))
+df = df.withColumn("kitchen_12_kw", format_number(col("kitchen_12_kw"), 8))
+df = df.withColumn("kitchen_14_kw", format_number(col("kitchen_14_kw"), 8))
+df = df.withColumn("kitchen_38_kw", format_number(col("kitchen_38_kw"), 8))
+df = df.withColumn("barn_kw", format_number(col("barn_kw"), 8))
+df = df.withColumn("well_kw", format_number(col("well_kw"), 8))
+df = df.withColumn("microwave_kw", format_number(col("microwave_kw"), 8))
+df = df.withColumn("living_room_kw", format_number(col("living_room_kw"), 8))
+df = df.withColumn("solar_kw", format_number(col("solar_kw"), 8))
+
+
+
+# --------------------------------------------------------------------------------
+# ------------------------------STORAGE ON DB-------------------------------------
+# --------------------------------------------------------------------------------
+
 
 
 # Visualizza lo streaming dei dati
