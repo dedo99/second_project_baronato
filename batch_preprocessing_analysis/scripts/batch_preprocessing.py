@@ -11,7 +11,15 @@ parser.add_argument("--input_path", type=str, help="Input file path")
 args = parser.parse_args()
 input_filepath = args.input_path
 
-spark = SparkSession.builder.appName("PREPROCESSING").getOrCreate()
+# spark = SparkSession.builder.appName("PREPROCESSING").getOrCreate()
+
+spark = SparkSession.builder \
+    .appName('PREPROCESSING') \
+    .config('spark.cassandra.connection.host', 'cassandra') \
+    .config('spark.cassandra.connection.port', '9042') \
+    .config("spark.cassandra.auth.username", "cassandra") \
+    .config("spark.cassandra.auth.password", "cassandra") \
+    .getOrCreate()
 
 indicies = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]
 
@@ -60,6 +68,15 @@ df.columns = header
 
 print('\n\n' + str(len(df)) + '\n\n')
 
-df.to_csv('/home/pietro/Documenti/BigData/second_project_baronato/datasets/preprocessed.csv', index=False)
+# df.to_csv('/home/pietro/Documenti/BigData/second_project_baronato/datasets/preprocessed.csv', index=False)
 
 # Save on Cassandra
+
+df.write \
+    .format("org.apache.spark.sql.cassandra") \
+    .option("keyspace", "my_batch") \
+    .option("table", "preprocessed_row_dataset") \
+    .mode("append") \
+    .save()
+
+spark.stop()
