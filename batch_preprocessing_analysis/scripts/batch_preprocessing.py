@@ -1,17 +1,13 @@
 from pyspark.sql import SparkSession
 import pandas as pd
-import datetime
 import argparse
 import re
-from datetime import timedelta
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_path", type=str, help="Input file path")
 
 args = parser.parse_args()
 input_filepath = args.input_path
-
-# spark = SparkSession.builder.appName("PREPROCESSING").getOrCreate()
 
 spark = SparkSession.builder \
     .appName('PREPROCESSING') \
@@ -58,25 +54,17 @@ scientific_notation_RDD = convert_temperature_RDD.map(convert_scientific_notatio
 
 header = scientific_notation_RDD.first()
 
-df_spark = scientific_notation_RDD.toDF()
+remove_header = scientific_notation_RDD.filter(lambda line: line != header)
 
-df = df_spark.toPandas()
+df_spark = remove_header.toDF(header)
 
-df = df.iloc[1:]
+#df_spark.show()
 
-df.columns = header
-
-print('\n\n' + str(len(df)) + '\n\n')
-
-# df.to_csv('/home/pietro/Documenti/BigData/second_project_baronato/datasets/preprocessed.csv', index=False)
-
-# Save on Cassandra
-
-df.write \
-    .format("org.apache.spark.sql.cassandra") \
-    .option("keyspace", "my_batch") \
-    .option("table", "preprocessed_row_dataset") \
-    .mode("append") \
-    .save()
+df_spark.write \
+   .format("org.apache.spark.sql.cassandra") \
+   .option("keyspace", "my_batch") \
+   .option("table", "preprocessed_row_dataset") \
+   .mode("append") \
+   .save()
 
 spark.stop()

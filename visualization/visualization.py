@@ -184,7 +184,7 @@ def create_bar_chart(df, attribute, granularity):
 
 st.set_page_config(layout="wide")
 
-data_types = ['All', 'kW_use', 'weather']
+data_types = ['All', 'kw_use', 'weather']
 data_granularities = ['all_time', 'month', 'day_of_week', 'day']
 
 #################
