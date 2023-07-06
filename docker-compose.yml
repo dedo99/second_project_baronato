@@ -65,6 +65,43 @@ services:
         - ./cassandra_db/schema.cql:/schema.cql 
       command: /bin/bash -c "sleep 60 && echo loading cassandra keyspace && cqlsh cassandra -f /schema.cql"
 
+  visualization:
+    build: ./visualization
+    image: visualization:compose
+    container_name: visualization
+    depends_on:
+      kafka:
+        condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
+    networks:
+      - my-network
+    ports:
+      - "8501:8501"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    volumes:
+      - ./datasets/test:/input
+
+
+  batch-spark:
+    build: ./batch_preprocessing_analysis
+    image: batch-spark:compose
+    container_name: batch-spark
+    depends_on:
+      kafka:
+        condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
+    networks:
+      - my-network
+    ports:
+      - "4040:4040"
+      - "7077:7077"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    volumes:
+      - ./datasets:/input
+    # command: bash -c "while ! nc -z 127.0.0.1 9092; do sleep 1; done && python ./producer.py"
+
+
+
   influxdb:
     image: influxdb
     container_name: influxdb
@@ -91,7 +128,6 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=architetture_lambda  # Imposta la password dell'amministratore di Grafana
       - GF_USERS_ALLOW_SIGN_UP=false  # Disabilita la registrazione di nuovi utenti in Grafana
 
-
   producer:
     build: ./producer
     image: producer:compose
@@ -108,23 +144,6 @@ services:
     # command: bash -c "while ! nc -z 127.0.0.1 9092; do sleep 1; done && python ./producer.py"
 
 
-  batch-spark:
-    build: ./batch_preprocessing_analysis
-    image: batch-spark:compose
-    container_name: batch-spark
-    depends_on:
-      kafka:
-        condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
-    networks:
-      - my-network
-    ports:
-      - "4040:4040"
-      - "7077:7077"
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    volumes:
-      - ./datasets:/input
-    # command: bash -c "while ! nc -z 127.0.0.1 9092; do sleep 1; done && python ./producer.py"
 
   streaming-spark:
     build: ./streaming
@@ -133,8 +152,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
-      # influxdb:
-      #   condition: service_healthy  # Attendere che InfluxDB sia segnalato come "healthy"
+      influxdb:
+        condition: service_healthy  # Attendere che InfluxDB sia segnalato come "healthy"
     networks:
       - my-network
     ports:
@@ -143,24 +162,6 @@ services:
     environment:
       - SPARK_APPLICATION_MAIN_CLASS=your.main.Class
       - SPARK_APPLICATION_ARGS=--bootstrap.servers=kafka:9092 --topic=my-topic
-
-
-  visualization:
-    build: ./visualization
-    image: visualization:compose
-    container_name: visualization
-    depends_on:
-      kafka:
-        condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
-    networks:
-      - my-network
-    ports:
-      - "8501:8501"
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    volumes:
-      - ./datasets/test:/input
-      #DIPENDENZA CON CASSANDRA
 
 
 networks:

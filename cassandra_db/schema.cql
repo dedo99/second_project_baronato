@@ -4,6 +4,21 @@
 
 CREATE KEYSPACE IF NOT EXISTS streaming WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : '1' };
 
+-- Drop tables
+
+--DROP TABLE IF EXISTS streaming.raw_row_dataset;
+--DROP TABLE IF EXISTS my_batch.preprocessed_row_dataset;
+
+--DROP TABLE IF EXISTS my_batch.kw_use_all_time;
+--DROP TABLE IF EXISTS my_batch.kw_use_month;
+--DROP TABLE IF EXISTS my_batch.kw_use_day_of_week;
+--DROP TABLE IF EXISTS my_batch.kw_use_day;
+
+--DROP TABLE IF EXISTS my_batch.weather_all_time;
+--DROP TABLE IF EXISTS my_batch.weather_month;
+--DROP TABLE IF EXISTS my_batch.weather_day_of_week;
+--DROP TABLE IF EXISTS my_batch.weather_day;
+
 -- Create a table
 
 CREATE TABLE IF NOT EXISTS streaming.raw_row_dataset (
@@ -157,7 +172,7 @@ CREATE KEYSPACE IF NOT EXISTS my_batch WITH REPLICATION = { 'class' : 'SimpleStr
 -- Create a table
 
 CREATE TABLE IF NOT EXISTS my_batch.kw_use_day(
-  daybigint PRIMARY KEY,
+  day bigint PRIMARY KEY,
   use_kw_total decimal,
   gen_kw_total decimal,
   use_kw_avg decimal,
@@ -178,7 +193,8 @@ CREATE KEYSPACE IF NOT EXISTS my_batch WITH REPLICATION = { 'class' : 'SimpleStr
 -- Create a table
 
 CREATE TABLE IF NOT EXISTS my_batch.weather_all_time(
-  avgTemp decimal PRIMARY KEY,
+  count bigint PRIMARY KEY,
+  avgTemp decimal,
   minTemp decimal,
   maxTemp decimal,
   avgHum decimal,

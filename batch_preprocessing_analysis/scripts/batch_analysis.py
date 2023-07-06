@@ -95,129 +95,130 @@ kw_day_df = spark.sql("""
 
 # Analisi tempo atmosferico 
 weather_total_df = spark.sql("""
-    SELECT AVG(temperature) AS avgTemp,
-           MIN(temperature) AS minTemp,
-           MAX(temperature) AS maxTemp,
-           AVG(humidity) AS avgHum,
-           MIN(humidity) AS minHum,
-           MAX(humidity) AS maxHum,
-           AVG(visibility) AS avgVis,
-           MIN(visibility) AS minVis,
-           MAX(visibility) AS maxVis,
-           AVG(apparent_temperature) AS avgAppTemp,
-           MIN(apparent_temperature) AS minAppTemp,
-           MAX(apparent_temperature) AS maxAppTemp,
-           AVG(pressure) AS avgPress,
-           MIN(pressure) AS minPress,
-           MAX(pressure) AS maxPress,
-           AVG(wind_speed) AS avgWSpeed,
-           MIN(wind_speed) AS minWSpeed,
-           MAX(wind_speed) AS maxWSpeed,
-           AVG(wind_bearing) AS avgWBear,
-           MIN(wind_bearing) AS minWBear,
-           MAX(wind_bearing) AS maxWBear,
-           AVG(precip_intensity) AS avgPrec,
-           MIN(precip_intensity) AS minPrec,
-           MAX(precip_intensity) AS maxPrec,
-           AVG(dew_point) AS avgDPoint,
-           MIN(dew_point) AS minDPoint,
-           MAX(dew_point) AS maxDPoint
+    SELECT COUNT(*) AS count,
+           AVG(temperature) AS avgtemp,
+           MIN(temperature) AS mintemp,
+           MAX(temperature) AS maxtemp,
+           AVG(humidity) AS avghum,
+           MIN(humidity) AS minhum,
+           MAX(humidity) AS maxhum,
+           AVG(visibility) AS avgvis,
+           MIN(visibility) AS minvis,
+           MAX(visibility) AS maxvis,
+           AVG(apparent_temperature) AS avgapptemp,
+           MIN(apparent_temperature) AS minapptemp,
+           MAX(apparent_temperature) AS maxapptemp,
+           AVG(pressure) AS avgpress,
+           MIN(pressure) AS minpress,
+           MAX(pressure) AS maxpress,
+           AVG(wind_speed) AS avgwspeed,
+           MIN(wind_speed) AS minwspeed,
+           MAX(wind_speed) AS maxwspeed,
+           AVG(wind_bearing) AS avgwbear,
+           MIN(wind_bearing) AS minwbear,
+           MAX(wind_bearing) AS maxwbear,
+           AVG(precip_intensity) AS avgprec,
+           MIN(precip_intensity) AS minprec,
+           MAX(precip_intensity) AS maxprec,
+           AVG(dew_point) AS avgdpoint,
+           MIN(dew_point) AS mindpoint,
+           MAX(dew_point) AS maxdpoint
     FROM df
 """)
 
 weather_month_df = spark.sql("""
     SELECT MONTH(time) AS month,
-           AVG(temperature) AS avgTemp,
-           MIN(temperature) AS minTemp,
-           MAX(temperature) AS maxTemp,
-           AVG(humidity) AS avgHum,
-           MIN(humidity) AS minHum,
-           MAX(humidity) AS maxHum,
-           AVG(visibility) AS avgVis,
-           MIN(visibility) AS minVis,
-           MAX(visibility) AS maxVis,
-           AVG(apparent_temperature) AS avgAppTemp,
-           MIN(apparent_temperature) AS minAppTemp,
-           MAX(apparent_temperature) AS maxAppTemp,
-           AVG(pressure) AS avgPress,
-           MIN(pressure) AS minPress,
-           MAX(pressure) AS maxPress,
-           AVG(wind_speed) AS avgWSpeed,
-           MIN(wind_speed) AS minWSpeed,
-           MAX(wind_speed) AS maxWSpeed,
-           AVG(wind_bearing) AS avgWBear,
-           MIN(wind_bearing) AS minWBear,
-           MAX(wind_bearing) AS maxWBear,
-           AVG(precip_intensity) AS avgPrec,
-           MIN(precip_intensity) AS minPrec,
-           MAX(precip_intensity) AS maxPrec,
-           AVG(dew_point) AS avgDPoint,
-           MIN(dew_point) AS minDPoint,
-           MAX(dew_point) AS maxDPoint
+           AVG(temperature) AS avgtemp,
+           MIN(temperature) AS mintemp,
+           MAX(temperature) AS maxtemp,
+           AVG(humidity) AS avghum,
+           MIN(humidity) AS minhum,
+           MAX(humidity) AS maxhum,
+           AVG(visibility) AS avgvis,
+           MIN(visibility) AS minvis,
+           MAX(visibility) AS maxvis,
+           AVG(apparent_temperature) AS avgapptemp,
+           MIN(apparent_temperature) AS minapptemp,
+           MAX(apparent_temperature) AS maxapptemp,
+           AVG(pressure) AS avgpress,
+           MIN(pressure) AS minpress,
+           MAX(pressure) AS maxpress,
+           AVG(wind_speed) AS avgwspeed,
+           MIN(wind_speed) AS minwspeed,
+           MAX(wind_speed) AS maxwspeed,
+           AVG(wind_bearing) AS avgwbear,
+           MIN(wind_bearing) AS minwbear,
+           MAX(wind_bearing) AS maxwbear,
+           AVG(precip_intensity) AS avgprec,
+           MIN(precip_intensity) AS minprec,
+           MAX(precip_intensity) AS maxprec,
+           AVG(dew_point) AS avgdpoint,
+           MIN(dew_point) AS mindpoint,
+           MAX(dew_point) AS maxdpoint
     FROM df
     GROUP BY MONTH(time)
 """)
 weather_dayofweek_df = spark.sql("""
     SELECT DAYOFWEEK(time) AS day_of_week,
-           AVG(temperature) AS avgTemp,
-           MIN(temperature) AS minTemp,
-           MAX(temperature) AS maxTemp,
-           AVG(humidity) AS avgHum,
-           MIN(humidity) AS minHum,
-           MAX(humidity) AS maxHum,
-           AVG(visibility) AS avgVis,
-           MIN(visibility) AS minVis,
-           MAX(visibility) AS maxVis,
-           AVG(apparent_temperature) AS avgAppTemp,
-           MIN(apparent_temperature) AS minAppTemp,
-           MAX(apparent_temperature) AS maxAppTemp,
-           AVG(pressure) AS avgPress,
-           MIN(pressure) AS minPress,
-           MAX(pressure) AS maxPress,
-           AVG(wind_speed) AS avgWSpeed,
-           MIN(wind_speed) AS minWSpeed,
-           MAX(wind_speed) AS maxWSpeed,
-           AVG(wind_bearing) AS avgWBear,
-           MIN(wind_bearing) AS minWBear,
-           MAX(wind_bearing) AS maxWBear,
-           AVG(precip_intensity) AS avgPrec,
-           MIN(precip_intensity) AS minPrec,
-           MAX(precip_intensity) AS maxPrec,
-           AVG(dew_point) AS avgDPoint,
-           MIN(dew_point) AS minDPoint,
-           MAX(dew_point) AS maxDPoint
+           AVG(temperature) AS avgtemp,
+           MIN(temperature) AS mintemp,
+           MAX(temperature) AS maxtemp,
+           AVG(humidity) AS avghum,
+           MIN(humidity) AS minhum,
+           MAX(humidity) AS maxhum,
+           AVG(visibility) AS avgvis,
+           MIN(visibility) AS minvis,
+           MAX(visibility) AS maxvis,
+           AVG(apparent_temperature) AS avgapptemp,
+           MIN(apparent_temperature) AS minapptemp,
+           MAX(apparent_temperature) AS maxapptemp,
+           AVG(pressure) AS avgpress,
+           MIN(pressure) AS minpress,
+           MAX(pressure) AS maxpress,
+           AVG(wind_speed) AS avgwspeed,
+           MIN(wind_speed) AS minwspeed,
+           MAX(wind_speed) AS maxwspeed,
+           AVG(wind_bearing) AS avgwbear,
+           MIN(wind_bearing) AS minwbear,
+           MAX(wind_bearing) AS maxwbear,
+           AVG(precip_intensity) AS avgprec,
+           MIN(precip_intensity) AS minprec,
+           MAX(precip_intensity) AS maxprec,
+           AVG(dew_point) AS avgdpoint,
+           MIN(dew_point) AS mindpoint,
+           MAX(dew_point) AS maxdpoint
     FROM df
     GROUP BY DAYOFWEEK(time)
 """)
 weather_day_df = spark.sql("""
     SELECT DAYOFYEAR(time) AS day,
-           AVG(temperature) AS avgTemp,
-           MIN(temperature) AS minTemp,
-           MAX(temperature) AS maxTemp,
-           AVG(humidity) AS avgHum,
-           MIN(humidity) AS minHum,
-           MAX(humidity) AS maxHum,
-           AVG(visibility) AS avgVis,
-           MIN(visibility) AS minVis,
-           MAX(visibility) AS maxVis,
-           AVG(apparent_temperature) AS avgAppTemp,
-           MIN(apparent_temperature) AS minAppTemp,
-           MAX(apparent_temperature) AS maxAppTemp,
-           AVG(pressure) AS avgPress,
-           MIN(pressure) AS minPress,
-           MAX(pressure) AS maxPress,
-           AVG(wind_speed) AS avgWSpeed,
-           MIN(wind_speed) AS minWSpeed,
-           MAX(wind_speed) AS maxWSpeed,
-           AVG(wind_bearing) AS avgWBear,
-           MIN(wind_bearing) AS minWBear,
-           MAX(wind_bearing) AS maxWBear,
-           AVG(precip_intensity) AS avgPrec,
-           MIN(precip_intensity) AS minPrec,
-           MAX(precip_intensity) AS maxPrec,
-           AVG(dew_point) AS avgDPoint,
-           MIN(dew_point) AS minDPoint,
-           MAX(dew_point) AS maxDPoint
+           AVG(temperature) AS avgtemp,
+           MIN(temperature) AS mintemp,
+           MAX(temperature) AS maxtemp,
+           AVG(humidity) AS avghum,
+           MIN(humidity) AS minhum,
+           MAX(humidity) AS maxhum,
+           AVG(visibility) AS avgvis,
+           MIN(visibility) AS minvis,
+           MAX(visibility) AS maxvis,
+           AVG(apparent_temperature) AS avgapptemp,
+           MIN(apparent_temperature) AS minapptemp,
+           MAX(apparent_temperature) AS maxapptemp,
+           AVG(pressure) AS avgpress,
+           MIN(pressure) AS minpress,
+           MAX(pressure) AS maxpress,
+           AVG(wind_speed) AS avgwspeed,
+           MIN(wind_speed) AS minwspeed,
+           MAX(wind_speed) AS maxwspeed,
+           AVG(wind_bearing) AS avgwbear,
+           MIN(wind_bearing) AS minwbear,
+           MAX(wind_bearing) AS maxwbear,
+           AVG(precip_intensity) AS avgprec,
+           MIN(precip_intensity) AS minprec,
+           MAX(precip_intensity) AS maxprec,
+           AVG(dew_point) AS avgdpoint,
+           MIN(dew_point) AS mindpoint,
+           MAX(dew_point) AS maxdpoint
     FROM df
     GROUP BY DAYOFYEAR(time)
 """)
@@ -256,28 +257,28 @@ kw_day_df.write \
 weather_total_df.write \
    .format("org.apache.spark.sql.cassandra") \
    .option("keyspace", "my_batch") \
-   .option("table", "weather_use_all_time") \
+   .option("table", "weather_all_time") \
    .mode("append") \
    .save()
 
 weather_month_df.write \
    .format("org.apache.spark.sql.cassandra") \
    .option("keyspace", "my_batch") \
-   .option("table", "weather_use_month") \
+   .option("table", "weather_month") \
    .mode("append") \
    .save()
 
 weather_dayofweek_df.write \
    .format("org.apache.spark.sql.cassandra") \
    .option("keyspace", "my_batch") \
-   .option("table", "weather_use_day_of_week") \
+   .option("table", "weather_day_of_week") \
    .mode("append") \
    .save()
 
 weather_day_df.write \
    .format("org.apache.spark.sql.cassandra") \
    .option("keyspace", "my_batch") \
-   .option("table", "weather_use_day") \
+   .option("table", "weather_day") \
    .mode("append") \
    .save()
 
