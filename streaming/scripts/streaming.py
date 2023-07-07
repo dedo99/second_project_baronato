@@ -42,11 +42,9 @@ client = InfluxDBClient(url=influxdb_url, token=token, org=influxdb_org)
 def write_to_influxdb(row):
     write_api = client.write_api(write_options=SYNCHRONOUS)
     try:
-        timestamp_unix_str = row.time_key
-        # Converti il timestamp Unix in un oggetto datetime
-        timestamp_unix = int(timestamp_unix_str)
-        timestamp_obj = datetime.fromtimestamp(timestamp_unix)
-        timestamp_str = timestamp_obj.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        timestamp_str = row.time_key
+        timestamp_obj = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+        timestamp_unix = int(timestamp_obj.timestamp())
         point = Point("raw_iothome_data")
         point.tag("date", timestamp_str)  # Aggiungi il campo 'date' come tag
         point.field("use_kw", row.use_kw)
@@ -83,9 +81,10 @@ def write_to_influxdb(row):
 
         print("scritturaaaaa!!")
         write_api.write(bucket=influxdb_bucket, org="iothome", record=point)
-    except ValueError:
-        # Gestisci il caso in cui il valore del timestamp non sia valido
-        pass
+    except Exception as e:
+        # Stampa il messaggio di errore personalizzato
+        print("Errore nell'inserimento dei dati su InfluxDB:", e)
+
 
 
 # --------------------------------------------------------------------------------
