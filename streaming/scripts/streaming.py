@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import split, col, format_number
 import os
-from influxdb_client import InfluxDBClient, Point
+from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 from datetime import datetime
 
@@ -42,50 +42,56 @@ client = InfluxDBClient(url=influxdb_url, token=token, org=influxdb_org)
 def write_to_influxdb(row):
     write_api = client.write_api(write_options=SYNCHRONOUS)
     try:
-        timestamp_unix_str = row.time_key
-        # Converti il timestamp Unix in un oggetto datetime
-        timestamp_unix = int(timestamp_unix_str)
-        timestamp_obj = datetime.fromtimestamp(timestamp_unix)
-        timestamp_str = timestamp_obj.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-        point = Point("raw_iothome_data")
-        point.tag("date", timestamp_str)  # Aggiungi il campo 'date' come tag
-        point.field("use_kw", row.use_kw)
-        point.field("gen_kw", row.gen_kw)
-        point.field("house_overall_kw", row.house_overall_kw)
-        point.field("dishwasher_kw", row.dishwasher_kw)
-        point.field("furnace_1_kw", row.furnace_1_kw)
-        point.field("furnace_2_kw", row.furnace_2_kw)
-        point.field("home_office_kw", row.home_office_kw)
-        point.field("fridge_kw", row.fridge_kw)
-        point.field("wine_cellar_kw", row.wine_cellar_kw)
-        point.field("garage_door_kw", row.garage_door_kw)
-        point.field("kitchen_12_kw", row.kitchen_12_kw)
-        point.field("kitchen_14_kw", row.kitchen_14_kw)
-        point.field("kitchen_38_kw", row.kitchen_38_kw)
-        point.field("barn_kw", row.barn_kw)
-        point.field("well_kw", row.well_kw)
-        point.field("microwave_kw", row.microwave_kw)
-        point.field("living_room_kw", row.living_room_kw)
-        point.field("solar_kw", row.solar_kw)
-        point.field("temperature", row.temperature)
+        timestamp_str = str(row.time_key)
+        # timestamp = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
+        # timestamp_rfc3339 = timestamp.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+        # time_str = "2016-01-01 05:00:00"
+        time_obj = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+
+        # Convert the datetime object to the desired format
+        timestamp = time_obj.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        point = Point("raw_iothome_data_prova3").time(timestamp, WritePrecision.S)
+        print(timestamp)
+        # point.tag("date", timestamp_str)  # Aggiungi il campo 'date' come tag
+        point.field("use_kw", float(row.use_kw))
+        point.field("gen_kw", float(float(row.gen_kw)))
+        point.field("house_overall_kw", float(row.house_overall_kw))
+        point.field("dishwasher_kw", float(row.dishwasher_kw))
+        point.field("furnace_1_kw", float(row.furnace_1_kw))
+        point.field("furnace_2_kw", float(row.furnace_2_kw))
+        point.field("home_office_kw", float(row.home_office_kw))
+        point.field("fridge_kw", float(row.fridge_kw))
+        point.field("wine_cellar_kw", float(row.wine_cellar_kw))
+        point.field("garage_door_kw", float(row.garage_door_kw))
+        point.field("kitchen_12_kw", float(row.kitchen_12_kw))
+        point.field("kitchen_14_kw", float(row.kitchen_14_kw))
+        point.field("kitchen_38_kw", float(row.kitchen_38_kw))
+        point.field("barn_kw", float(row.barn_kw))
+        point.field("well_kw", float(row.well_kw))
+        point.field("microwave_kw", float(row.microwave_kw))
+        point.field("living_room_kw", float(row.living_room_kw))
+        point.field("solar_kw", float(row.solar_kw))
+        point.field("temperature", float(row.temperature))
         point.field("icon", row.icon)
-        point.field("humidity", row.humidity)
-        point.field("visibility", row.visibility)
+        point.field("humidity", float(row.humidity))
+        point.field("visibility", float(row.visibility))
         point.field("summary", row.summary)
-        point.field("apparent_temperature", row.apparent_temperature)
-        point.field("pressure", row.pressure)
-        point.field("wind_speed", row.wind_speed)
+        point.field("apparent_temperature", float(row.apparent_temperature))
+        point.field("pressure", float(row.pressure))
+        point.field("wind_speed", float(row.wind_speed))
         point.field("cloud_cover", row.cloud_cover)
-        point.field("wind_bearing", row.wind_bearing)
-        point.field("precip_intensity", row.precip_intensity)
-        point.field("dew_point", row.dew_point)
-        point.field("precip_probability", row.precip_probability)
+        point.field("wind_bearing", float(row.wind_bearing))
+        point.field("precip_intensity", float(row.precip_intensity))
+        point.field("dew_point", float(row.dew_point))
+        point.field("precip_probability", float(row.precip_probability))
 
         print("scritturaaaaa!!")
         write_api.write(bucket=influxdb_bucket, org="iothome", record=point)
-    except ValueError:
-        # Gestisci il caso in cui il valore del timestamp non sia valido
-        pass
+    except Exception as e:
+        # Stampa il messaggio di errore personalizzato
+        print("Errore nell'inserimento dei dati su InfluxDB:", e)
+
 
 
 # --------------------------------------------------------------------------------

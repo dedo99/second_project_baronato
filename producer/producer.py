@@ -46,7 +46,7 @@ def send_dataset_to_kafka(topic, file_path):
         for row in reader:
             data = ','.join(row)  # Unisci gli attributi separati da virgola in una stringa
             send_single_data(topic, data)
-            time.sleep(1)
+            # time.sleep(1)
 
 # Esegui l'invio del dataset a Kafka
 send_dataset_to_kafka('my-topic', '/input/HomeC2.csv')
