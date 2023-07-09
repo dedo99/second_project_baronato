@@ -73,8 +73,6 @@ def create_area_chart(df, attribute):
         max_values = [0]
         avg = [0]
 
-    st.write(len(days), len(avg))
-
     fig, ax = plt.subplots()
 
     ax.fill_between(days, min_values, max_values, alpha=0.3, label='Range')
@@ -156,7 +154,6 @@ def create_bar_chart(df, attribute, granularity):
 
     bar_width = 0.2
     positions = np.arange(len(period))
-    st.write(len(period), len(avg))
 
     if sum is None:
         ax.bar(positions - bar_width, avg, bar_width, label='Average')

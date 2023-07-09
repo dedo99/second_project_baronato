@@ -1,2 +1,1 @@
-1) cassandra load key space ci mette tanto --> conviene cancellare ogni volta la tabella e riscriverla (con append sovreascrive quindi no)
-2) visualization (anche MLlib) deve partire dopo l'analisi batch
+1) visualization (anche MLlib) deve partire dopo l'analisi batch

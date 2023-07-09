@@ -13,11 +13,6 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--input_path", type=str, help="Input file path")
-args = parser.parse_args()
-input_filepath = args.input_path
-
 spark = SparkSession.builder \
     .appName('ANALYSIS') \
     .config('spark.cassandra.connection.host', 'cassandra') \
@@ -25,6 +20,7 @@ spark = SparkSession.builder \
     .config("spark.cassandra.auth.username", "cassandra") \
     .config("spark.cassandra.auth.password", "cassandra") \
     .getOrCreate()
+
 
 df = spark.read \
     .format("org.apache.spark.sql.cassandra") \
@@ -190,6 +186,7 @@ weather_dayofweek_df = spark.sql("""
     FROM df
     GROUP BY DAYOFWEEK(time)
 """)
+
 weather_day_df = spark.sql("""
     SELECT DAYOFYEAR(time) AS day,
            AVG(temperature) AS avgtemp,
@@ -223,7 +220,25 @@ weather_day_df = spark.sql("""
     GROUP BY DAYOFYEAR(time)
 """)
 
-# Ulteriori Analisi??
+# Analisi per predizione
+weather_prediction = spark.sql("""
+    SELECT DAYOFYEAR(time) AS day, HOUR(time) AS hour_of_day,
+           AVG(use_kw) AS use_kw, 
+           AVG(gen_kw) AS gen_kw,
+           AVG(humidity) AS humidity,
+           AVG(visibility) AS visibility,
+           AVG(apparent_temperature) AS apparent_temperature,
+           AVG(pressure) AS pressure,
+           AVG(wind_speed) AS wind_speed,
+           AVG(wind_bearing) AS wind_bearing,
+           AVG(precip_intensity) AS precip_intensity,
+           AVG(dew_point) AS dew_point,
+           AVG(precip_probability) AS precip_probability,
+           AVG(temperature) AS temperature
+    FROM df
+    GROUP BY DAYOFYEAR(time), HOUR(time)
+    ORDER BY DAYOFYEAR(time), HOUR(time)
+""")
 
 # Save on cassandra
 kw_total_df.write \
@@ -282,8 +297,14 @@ weather_day_df.write \
    .mode("append") \
    .save()
 
-spark.stop()
+weather_prediction.write \
+   .format("org.apache.spark.sql.cassandra") \
+   .option("keyspace", "my_batch") \
+   .option("table", "weather_prediction") \
+   .mode("append") \
+   .save()
 
+#weather_prediction.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/weather_prediction.csv", index = False)
 # kw_total_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/kW_use_all_time.csv", index = False)
 # kw_month_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/kW_use_month.csv", index = False)
 # kw_dayofweek_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/kW_use_day_of_week.csv", index = False)
@@ -293,3 +314,4 @@ spark.stop()
 # weather_month_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/weather_month.csv", index = False)
 # weather_dayofweek_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/weather_day_of_week.csv", index = False)
 # weather_day_df.toPandas().to_csv("/home/pietro/Documenti/BigData/second_project_baronato/datasets/test/weather_day.csv", index = False)
+spark.stop()

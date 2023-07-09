@@ -1,6 +1,5 @@
 version: "3.3"
 
-
 services:
   
   zookeeper:
@@ -14,7 +13,6 @@ services:
     ports:
       - "22181:2181"
   
-
   kafka:
     build: ./kafka
     image: kafka:compose
@@ -81,7 +79,6 @@ services:
     volumes:
       - ./datasets/test:/input
 
-
   batch-spark:
     build: ./batch_preprocessing_analysis
     image: batch-spark:compose
@@ -100,8 +97,6 @@ services:
       - ./datasets:/input
     # command: bash -c "while ! nc -z 127.0.0.1 9092; do sleep 1; done && python ./producer.py"
 
-
-
   influxdb:
     image: influxdb
     container_name: influxdb
@@ -113,7 +108,6 @@ services:
      - INFLUXDB_USER=user
      - INFLUXDB_PASS=password
      - INFLUXDB_DB=iothome
-
 
   grafana:
     image: grafana/grafana:main
@@ -143,8 +137,6 @@ services:
       - ./datasets:/input
     # command: bash -c "while ! nc -z 127.0.0.1 9092; do sleep 1; done && python ./producer.py"
 
-
-
   streaming-spark:
     build: ./streaming
     image: streaming-spark:compose
@@ -162,7 +154,6 @@ services:
     environment:
       - SPARK_APPLICATION_MAIN_CLASS=your.main.Class
       - SPARK_APPLICATION_ARGS=--bootstrap.servers=kafka:9092 --topic=my-topic
-
 
 networks:
   my-network:

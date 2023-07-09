@@ -346,3 +346,30 @@ CREATE TABLE IF NOT EXISTS my_batch.weather_day(
 -- Query
 
 SELECT * FROM my_batch.weather_day;
+
+-- Create a keyspace
+CREATE KEYSPACE IF NOT EXISTS my_batch WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : '1' };
+
+-- Create a table
+
+CREATE TABLE IF NOT EXISTS my_batch.weather_preiction(
+  day bigint,
+  hour_of_day bigint,
+  use_kw decimal, 
+  gen_kw decimal,
+  humidity decimal,
+  visibility decimal,
+  apparent_temperature decimal,
+  pressure decimal,
+  wind_speed decimal,
+  wind_bearing decimal,
+  precip_intensity decimal,
+  dew_point decimal,
+  precip_probability decimal,
+  temperature decimal,
+  PRIMARY KEY(day, hour_of_day)
+);
+
+-- Query
+
+SELECT * FROM my_batch.weather_prediction;
