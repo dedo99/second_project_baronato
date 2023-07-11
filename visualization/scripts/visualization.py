@@ -213,7 +213,7 @@ df = pd.DataFrame(list(result_set))
 
 row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.columns((.1, 2.3, .1, 1.3, .1))
 with row0_1:
-    st.title('Test - Data Visualization')
+    st.title('Lambda Architecture - Data Visualization')
 with row0_2:
     st.text("")
     st.subheader('Streamlit App by Pietro Baroni and Andrea De Donato')

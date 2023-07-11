@@ -1,0 +1,7 @@
+WEATHER PREDICTION
+train set : RMSE: 1.078683          r2: 0.996807
+test set : RMSE: 1.0614             r2: 0.996914
+
+KW USAGE PREDICTION
+train set: RMSE: 0.000000           r2: 1.000000
+test set:  RMSE: 7.25604e-15        r2 = 1
