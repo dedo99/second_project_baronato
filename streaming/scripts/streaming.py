@@ -51,7 +51,7 @@ def write_to_influxdb(row):
         # Convert the datetime object to the desired format
         timestamp = time_obj.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        point = Point("raw_iothome_data_prova3").time(timestamp, WritePrecision.S)
+        point = Point("raw_iothome_data_prova4").time(timestamp, WritePrecision.S)
         print(timestamp)
         # point.tag("date", timestamp_str)  # Aggiungi il campo 'date' come tag
         point.field("use_kw", float(row.use_kw))
