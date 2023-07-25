@@ -123,7 +123,6 @@ print("R Squared (R2) on test data = %g" % lr_evaluator2.evaluate(predictions2))
 test_result2 = model2.evaluate(test_data2)
 print("Root Mean Squared Error (RMSE) on test data = %g" % test_result2.rootMeanSquaredError)
 
-# Re
 prediction_list = predictions2.select('prediction').collect()
 prediction_list = [row['prediction'] for row in prediction_list]
 
@@ -143,8 +142,8 @@ ax.plot(x_values, prediction_list, marker='o', linestyle='--', label='Predicted 
 
 # Set labels and title
 ax.set_xlabel('Timestamp')
-ax.set_ylabel('Temperature')
-ax.set_title('Differences between predictions and true values in kw usage')
+ax.set_ylabel('kW usage')
+ax.set_title('Differences between predictions and true values in kW usage')
 
 # Add legend
 ax.legend()
