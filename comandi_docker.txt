@@ -1,3 +1,20 @@
+Avviare l'applicazione:
+
+//COSTRUZIONE IMMAGINI DEI CONTAINER ATTRAVERSO DOCKER COMPOSE
+
+docker compose build
+
+//AVVIO DELL'APPLICAZIONE CON DOCKER COMPOSE
+
+docker compose up
+
+//ARRESTO DELL'APPLICAZIONE CON DOCKER COMPOSE
+
+docker compose down
+
+
+Altri comandi:
+
 //CAMBIARE CONTESTO DI DOCKER SU TERMINALE
 
 docker context ls
@@ -28,18 +45,6 @@ docker create --name=myhello myhello
 //ESEGUIRE CONTAINER CHE È STATO CREATO
 
 docker start -i myhello
-
-//COSTRUZIONE IMMAGINI DEI CONTAINER ATTRAVERSO DOCKER COMPOSE
-
-docker compose build
-
-//AVVIO DELL'APPLICAZIONE CON DOCKER COMPOSE
-
-docker compose up
-
-//ARRESTO DELL'APPLICAZIONE CON DOCKER COMPOSE
-
-docker compose down
 
 //ENTRARE NEL TERMINALE DEL CONTAINER ATTIVO
 

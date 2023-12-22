@@ -63,23 +63,24 @@ services:
         - ./cassandra_db/schema.cql:/schema.cql 
       command: /bin/bash -c "sleep 60 && echo loading cassandra keyspace && cqlsh cassandra -f /schema.cql"
 
-  # visualization:
-  #   build: ./visualization
-  #   image: visualization:compose
-  #   container_name: visualization
-  #   depends_on:
-  #     kafka:
-  #       condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
-  #   networks:
-  #     - my-network
-  #   ports:
-  #     - "8501:8501"
-  #   environment:
-  #     KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-  #   volumes:
-  #     - ./datasets/test:/input
+  visualization:
+    build: ./visualization
+    image: visualization:compose
+    container_name: visualization
+    depends_on:
+      kafka:
+        condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
+      batch_spark:
+        condition: service_completed_successfully # Attendere che analisi batch sia completata
+    networks:
+      - my-network
+    ports:
+      - "8501:8501"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    volumes:
+      - ./datasets/test:/input
 
-<<<<<<< HEAD
   batch-spark:
     build: ./batch_preprocessing_analysis
     image: batch-spark:compose
@@ -97,26 +98,6 @@ services:
     volumes:
       - ./datasets:/input
     # command: bash -c "while ! nc -z 127.0.0.1 9092; do sleep 1; done && python ./producer.py"
-=======
-
-  # batch-spark:
-  #   build: ./batch_preprocessing_analysis
-  #   image: batch-spark:compose
-  #   container_name: batch-spark
-  #   depends_on:
-  #     kafka:
-  #       condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
-  #   networks:
-  #     - my-network
-  #   ports:
-  #     - "4040:4040"
-  #     - "7077:7077"
-  #   environment:
-  #     KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-  #   volumes:
-  #     - ./datasets:/input
-  #   # command: bash -c "while ! nc -z 127.0.0.1 9092; do sleep 1; done && python ./producer.py"
->>>>>>> 3a992f52a9b12b23669cb7f2a81d127bec10bcfd
 
   influxdb:
     image: influxdb
@@ -129,19 +110,6 @@ services:
      - INFLUXDB_USER=user
      - INFLUXDB_PASS=password
      - INFLUXDB_DB=iothome
-
-  grafana:
-    image: grafana/grafana:main
-    container_name: grafana
-    networks:
-      - my-network
-    ports:
-      - "3000:3000"  # Esponi la porta 3000 di Grafana
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=architetture_lambda  # Imposta la password dell'amministratore di Grafana
-      # - GF_USERS_ALLOW_SIGN_UP=false  # Disabilita la registrazione di nuovi utenti in Grafana
-    # volumes:
-    #   - ./grafana-data:/var/lib/grafana  # Percorso per la persistenza dei dati di Grafana
 
   producer:
     build: ./producer
@@ -165,8 +133,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy  # Attendere che Kafka sia segnalato come "healthy"
-      # influxdb:
-      #   condition: service_healthy  # Attendere che InfluxDB sia segnalato come "healthy"
+      influxdb:
+        condition: service_healthy  # Attendere che InfluxDB sia segnalato come "healthy"
     networks:
       - my-network
     ports:
